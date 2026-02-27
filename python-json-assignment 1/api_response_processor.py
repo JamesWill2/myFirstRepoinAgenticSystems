@@ -31,7 +31,7 @@ def main():
 
     # Check confidence threshold
     if confidence_score < 0.9:
-        print("⚠ Warning: Confidence score is below 0.9")
+        print("Warning: Confidence score is below 0.9")
 
     # Create follow-up dictionary and convert to JSON
     follow_up_result = {
