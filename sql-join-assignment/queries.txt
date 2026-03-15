@@ -1,0 +1,130 @@
+Step 1: Create Tables
+
+CREATE TABLE users (
+    user_id INTEGER PRIMARY KEY,
+    name TEXT,
+    signup_date DATE
+);
+
+CREATE TABLE orders (
+    order_id INTEGER PRIMARY KEY,
+    user_id INTEGER,
+    amount INTEGER
+);
+
+CREATE TABLE activity (
+    user_id INTEGER,
+    login_count INTEGER
+);
+
+Step 2: Insert Sample Data
+
+INSERT INTO users VALUES
+(1, 'Aarav', '2023-01-10'),
+(2, 'Diya', '2023-02-14'),
+(3, 'Rohan', '2023-03-01'),
+(4, 'Meera', '2023-04-11'),
+(5, 'Kabir', '2023-05-06');
+
+INSERT INTO orders VALUES
+(101, 1, 500),
+(102, 1, 700),
+(103, 2, 300),
+(104, 4, 900),
+(105, 4, 400);
+
+INSERT INTO activity VALUES
+(1, 25),
+(2, 10),
+(3, 5),
+(5, 12);
+
+1. Retrieve each user’s name and order amount
+SELECT users.name, orders.amount
+FROM users
+INNER JOIN orders
+ON users.user_id = orders.user_id;
+
+2. Retrieve user name and total order amount for each user
+SELECT users.name, SUM(orders.amount) AS total_order_amount
+FROM users
+INNER JOIN orders
+ON users.user_id = orders.user_id
+GROUP BY users.name;
+
+3. Retrieve all users and their login counts (including users with no activity)
+SELECT users.name, activity.login_count
+FROM users
+JOIN activity
+ON users.user_id = activity.user_id;
+
+4. Retrieve users who have never placed an order
+SELECT users.name
+FROM users
+LEFT JOIN orders
+ON users.user_id = orders.user_id
+WHERE orders.order_id IS NULL;
+
+5. Combine all three tables
+SELECT
+users.user_id,
+users.name,
+SUM(orders.amount) AS total_order_amount,
+activity.login_count
+FROM users
+LEFT JOIN orders
+ON users.user_id = orders.user_id
+LEFT JOIN activity
+ON users.user_id = activity.user_id
+GROUP BY users.user_id, users.name, activity.login_count;
+
+6. Retrieve users who placed orders greater than 400
+SELECT users.name, orders.amount
+FROM users
+INNER JOIN orders
+ON users.user_id = orders.user_id
+WHERE orders.amount > 400;
+
+7. Retrieve the top 3 users by total order amount
+SELECT users.name, SUM(orders.amount) AS total_order_amount
+FROM users
+INNER JOIN orders
+ON users.user_id = orders.user_id
+GROUP BY users.name
+ORDER BY total_order_amount DESC
+LIMIT 3;
+
+8. Retrieve users sorted by total order amount and login count
+SELECT
+users.name,
+SUM(orders.amount) AS total_order_amount,
+activity.login_count
+FROM users
+LEFT JOIN orders
+ON users.user_id = orders.user_id
+LEFT JOIN activity
+ON users.user_id = activity.user_id
+GROUP BY users.name, activity.login_count
+ORDER BY total_order_amount DESC, activity.login_count DESC;
+
+9. Return the average order amount per user
+SELECT users.name, AVG(orders.amount) AS average_order_amount
+FROM users
+INNER JOIN orders
+ON users.user_id = order.user_id
+GROUP BY users.name;
+
+10. Combined query
+SELECT
+users.user_id,
+users.name,
+SUM(orders.amount) AS total_order_amount,
+activity.login_count
+FROM users
+LEFT JOIN orders
+ON users.user_id = orders.user_id
+LEFT JOIN activity
+ON users.user_id = activity.user_id
+GROUP BY users.user_id, users.name, activity.login_count
+ORDER BY total_order_amount DESC
+LIMIT 3;
